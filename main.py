@@ -6,11 +6,20 @@ from PIL import Image
 #Local Lib Imports
 from texture import load_texture
 from s3tc import DXT1Texture
-from nncomp import FeatureGrid, ColorMLP
+from nncomp import FeatureGrid, ColorMLP, NeuralTexture
+
+# Helper for torch device settings
+def get_device():
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
 
 root = Path(__file__).resolve().parent
 output_dir = root / "outputs"
 output_dir.mkdir(exist_ok=True)
+device = get_device()
 
 # S3TC Baseline Analysis/Generation
 for filename in ("gradient.png", "bricks.png", "clouds.png"):
@@ -31,26 +40,26 @@ for filename in ("gradient.png", "bricks.png", "clouds.png"):
     print(f"  Ratio: {texture.nbytes / size:.2f}:1")
     print(f"  Bits/texel: {8 * size / (h * w):.2f}")
 
-# Helper for torch device settings
-def get_device():
-    if torch.cuda.is_available():
-        return "cuda"
-    if torch.backends.mps.is_available():
-        return "mps"
-    return "cpu"
+#Neural texture training on test textures
+for filename in ("gradient.png", "bricks.png", "clouds.png"):
+    print(f"\nTraining on {filename}")
+    texture = load_texture(root / "textures" / filename)
 
-# Testing
-device = get_device()
-feature_grid = FeatureGrid().to(device)
+    # A fresh model for each texture.
+    model = NeuralTexture().to(device)
+    model.compress(texture)
 
-uv = torch.rand(1024, 2, device=device)
-features = feature_grid(uv)
+    h, w = texture.shape[:2]
+    u = ((np.arange(w) + 0.5) / w)[None, :]
+    v = ((np.arange(h) + 0.5) / h)[:, None]
+    reconstruction = model.sample(u, v)
 
-print(features.shape)  # torch.Size([1024, 8])
+    target = texture.astype(np.float32) / 255.0
+    mse = np.mean((reconstruction - target) ** 2)
+    psnr = float("inf") if mse == 0 else -10 * np.log10(mse)
+    print(f"Full-image MSE: {mse:.6f} | PSNR: {psnr:.2f} dB")
 
-feature_grid = FeatureGrid().to(device)
-decoder = ColorMLP(feature_grid.out_dim).to(device)
-
-uv = torch.rand(1024, 2, device=device)
-features = feature_grid(uv)  # (1024, 8) with default settings
-rgb = decoder(features)      # (1024, 3), values in [0, 1]
+    pixels = np.rint(reconstruction * 255).astype(np.uint8)
+    Image.fromarray(pixels).save(
+        output_dir / f"{Path(filename).stem}_neural.png"
+    )

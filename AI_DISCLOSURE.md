@@ -8,7 +8,7 @@ Pre-P1:
 
 P1:
 - Help with basic structuring of Classes to be used (UncompressedTexture)
-- Help with u,v coordinate ordering/mapping (see lines 43-45 in texture.py)
+- Help with u,v coordinate ordering/mapping (see lines 43-45 in texture.py) 
 
 P2:
 - Class structuring (function headers, **PCA** help for finding c0 and c1, unpacking and packing rgb565 types)
@@ -21,6 +21,8 @@ P4:
 - n/a
 
 P5:
+- Batching to save on GPU memory usage (for def sample())
+- Class structuring once again
 
 P6:
 
