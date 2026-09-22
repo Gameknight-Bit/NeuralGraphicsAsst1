@@ -22,7 +22,7 @@ P4:
 
 P5:
 - Batching to save on GPU memory usage (for def sample())
-- Class structuring once again
+- Class structuring once again (just like in P1 and P2 since there is a similar structuring of texture classes)
 
 P6:
 

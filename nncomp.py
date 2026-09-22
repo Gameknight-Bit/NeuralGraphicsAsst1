@@ -89,7 +89,7 @@ class NeuralTexture(nn.Module):
     def forward(self, uv):
         return self.mlp(self.grid(uv))
 
-    def compress(self, texture, steps=2000, batch_size=16_384,
+    def compress(self, texture, steps=2000, batch_size=16384,
                  lr=1e-2, log_every=200):
         """
         Move the model to the desired device with .to(device) first.
@@ -132,7 +132,7 @@ class NeuralTexture(nn.Module):
         return self
 
     @torch.no_grad()
-    def sample(self, u, v, batch_size=16_384):
+    def sample(self, u, v, batch_size=16384):
         #Uses batches to limit GPU memory usage when reconstructing the texture. And should be compatible with
         #texture class written in P1.
 

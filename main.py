@@ -22,6 +22,7 @@ output_dir.mkdir(exist_ok=True)
 device = get_device()
 
 # S3TC Baseline Analysis/Generation
+"""
 for filename in ("gradient.png", "bricks.png", "clouds.png"):
     texture = load_texture(root / "textures" / filename)
     sampler = DXT1Texture().compress(texture)
@@ -39,7 +40,8 @@ for filename in ("gradient.png", "bricks.png", "clouds.png"):
     print(f"{filename}: {size:,} compressed bytes")
     print(f"  Ratio: {texture.nbytes / size:.2f}:1")
     print(f"  Bits/texel: {8 * size / (h * w):.2f}")
-
+"""
+    
 #Neural texture training on test textures
 for filename in ("gradient.png", "bricks.png", "clouds.png"):
     print(f"\nTraining on {filename}")
