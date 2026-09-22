@@ -41,9 +41,9 @@ class UncompressedTexture():
             raise ValueError("Coordinates must be finite.")
 
         # Map normalized coordinates to continuous texel indices.
-        x = np.clip(u, 0.0, 1.0) * (self.width - 1)
-        y = np.clip(v, 0.0, 1.0) * (self.height - 1)
-
+        x = np.clip(u * self.width - 0.5, 0, self.width - 1)
+        y = np.clip(v * self.height - 0.5, 0, self.height - 1)
+        
         x0 = np.floor(x).astype(np.intp)
         y0 = np.floor(y).astype(np.intp)
         x1 = np.minimum(x0 + 1, self.width - 1)
