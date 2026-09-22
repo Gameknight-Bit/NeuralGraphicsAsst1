@@ -15,8 +15,10 @@ P2:
 - Testing help (For generating the compressed textures)
 
 P3:
+- Fixes to coordinate convention (from x = u * (W-1) for align_corners=True to x = u * W - 0.5 to place texel centers at (i + 0.5)/W)
 
 P4:
+- n/a
 
 P5:
 

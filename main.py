@@ -1,14 +1,12 @@
 import torch
-
 from pathlib import Path
-
 import numpy as np
 from PIL import Image
 
+#Local Lib Imports
 from texture import load_texture
 from s3tc import DXT1Texture
-
-from feature_grid import FeatureGrid
+from nncomp import FeatureGrid, ColorMLP
 
 root = Path(__file__).resolve().parent
 output_dir = root / "outputs"
@@ -49,3 +47,10 @@ uv = torch.rand(1024, 2, device=device)
 features = feature_grid(uv)
 
 print(features.shape)  # torch.Size([1024, 8])
+
+feature_grid = FeatureGrid().to(device)
+decoder = ColorMLP(feature_grid.out_dim).to(device)
+
+uv = torch.rand(1024, 2, device=device)
+features = feature_grid(uv)  # (1024, 8) with default settings
+rgb = decoder(features)      # (1024, 3), values in [0, 1]

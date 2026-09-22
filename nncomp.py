@@ -36,3 +36,19 @@ class FeatureGrid(nn.Module):
             features.append(sampled[0, :, :, 0].transpose(0, 1))
 
         return torch.cat(features, dim=1)  # (N, out_dim)
+
+class ColorMLP(nn.Module):
+    def __init__(self, in_dim):
+        super().__init__()
+        #Just what P4 describes
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, 64),
+            nn.ReLU(),
+            nn.Linear(64, 64),
+            nn.ReLU(),
+            nn.Linear(64, 3),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        return self.net(x)
