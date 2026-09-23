@@ -158,3 +158,39 @@ class NeuralTexture(nn.Module):
             )
             colors[start:start + batch_size] = self(batch).cpu().numpy()
         return colors.reshape(u.shape + (3,))
+
+
+@torch.no_grad()
+def quantize_uint8(x):
+    """Quantize one array using its own range; return q, lo, scale, x_hat."""
+    x = x.detach().float()
+    lo, hi = x.min(), x.max()
+    scale = (hi - lo) / 255.0
+
+    # A constant array needs only one value; avoid dividing by zero.
+    if scale.item() == 0:
+        q = torch.zeros_like(x, dtype=torch.uint8)
+    else:
+        q = torch.round((x - lo) / scale).clamp(0, 255).to(torch.uint8)
+
+    x_hat = lo + q.float() * scale
+    return q, lo, scale, x_hat
+
+
+@torch.no_grad()
+def quantize_model(model, quantize_mlp=False):
+    """Replace parameters with decoded values and return their stored encoding.
+
+    Each grid level gets its own uint8 array and two float32 scalars.
+    MLP arrays stay float32 unless quantize_mlp=True. Inference still uses
+    float32, so this reduces stored size, not the model's runtime memory.
+    """
+    stored = {}
+    for name, parameter in model.named_parameters():
+        if name.startswith("grid.grids.") or quantize_mlp:
+            q, lo, scale, x_hat = quantize_uint8(parameter)
+            parameter.copy_(x_hat)
+            stored[name] = {"q": q.cpu(), "lo": lo.cpu(), "scale": scale.cpu()}
+        else:
+            stored[name] = {"float32": parameter.detach().cpu().clone()}
+    return stored
