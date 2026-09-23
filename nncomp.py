@@ -79,9 +79,9 @@ def make_training_data(texture, device):
 
 #Parent class for neural texture pipeline
 class NeuralTexture(nn.Module):
-    def __init__(self):
+    def __init__(self, resolutions=(16, 32, 64, 128), feat_dim=2):
         super().__init__()
-        self.grid = FeatureGrid()
+        self.grid = FeatureGrid(resolutions, feat_dim)
         self.mlp  = ColorMLP(self.grid.out_dim)
         self.height = None
         self.width = None

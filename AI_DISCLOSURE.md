@@ -25,6 +25,7 @@ P5:
 - Class structuring once again (just like in P1 and P2 since there is a similar structuring of texture classes)
 
 P6:
+- Writing the csv and graph output code
 
 P7:
 

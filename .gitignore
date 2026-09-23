@@ -27,6 +27,8 @@ venv/
 env/
 ENV/
 
+p6_results/
+
 .pytest_cache/
 .mypy_cache/
 .coverage
