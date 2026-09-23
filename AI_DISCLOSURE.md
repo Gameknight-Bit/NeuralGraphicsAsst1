@@ -28,5 +28,9 @@ P6:
 - Writing the csv and graph output code
 
 P7:
+- Writng the csv and graph output code once again
+    - Specifcially the quantization results graph comparisons
 
 P8:
+- Helped with writing generalized running script (rather than just `runp6.py` and `runp7.py`)
+- Also added quantization to MLP implemented with one flag to `run_textures.py`

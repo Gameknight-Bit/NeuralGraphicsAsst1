@@ -28,6 +28,9 @@ env/
 ENV/
 
 p6_results/
+p7_results/
+
+outputs/*
 
 .pytest_cache/
 .mypy_cache/

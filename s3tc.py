@@ -11,7 +11,6 @@ def pack_rgb565(color):
     return int((r << 11) | (g << 5) | b)
 
 
-# TODO: Change this to whatever we want c0 and c1 to have!!
 def unpack_rgb565(code):
     """Decode one packed RGB565 endpoint, or an array of endpoints."""
     code = np.asarray(code, dtype=np.uint16)
